@@ -3,10 +3,10 @@ var express = require('express')
   , app = express();
 
 app.configure(function(){
+    app.engine('.bemhtml.js', require(__dirname +'/.bem/bem-express.js').__express);
     app.set('env', 'development');
     app.set('port', process.env.PORT || 3000);
-    app.engine('.bemhtml.js', require(__dirname +'/.bem/bem-express.js').__express);
-    app.set('views', __dirname + '/pages-desktop/');
+    app.set('views', __dirname + '/desktop.bundles/');
     app.set('view engine', 'bemhtml.js');
     app.use(express.static(__dirname));
     app.use(app.router);
@@ -14,8 +14,17 @@ app.configure(function(){
 
 app.get('/', function(req, res) {
     res.render('index', { 
-        data: 'Express', 
-        app: app
+        app: app,
+        slides: [
+	    {
+		type: 'bem',
+		tagline: 'Делай BEM!'
+	    },
+	    {
+		type: 'another',
+		tagline: 'Делай THEM!'
+	    }
+	]
     });
 });
 

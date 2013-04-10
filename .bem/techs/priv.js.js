@@ -2,6 +2,10 @@ exports.baseTechName = 'js-i';
 
 exports.techMixin = {
 
+    getDependencies: function() {
+        return ['bemhtml'];
+    },
+
     getSuffixes: function() {
         return ['priv.js'];
     },

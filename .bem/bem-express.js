@@ -18,12 +18,27 @@ var bemDriver = function() {
 
     };
 
-    var getBemjson = function(str) {
+    var getBemjson = function(str, options) {
 
-        var path = str.replace('bemhtml', 'bemjson');
+        var path,
+            pathArr = str.replace('bemhtml', 'priv').split('/');
+
+        pathArr[pathArr.length - 1] = '_' + pathArr[pathArr.length - 1];
+        path = pathArr.join('/');
+
         return BEM.util.readFile(path)
             .then(function(c) {
-                return VM.runInThisContext(c, path);
+                var blocks = {},
+                    res;
+
+                try {
+                    eval(c);
+                    res = blocks['b-page'] ? blocks['b-page'](options) : { block: 'b-page', content: ["blocks['b-page'] not found in ", path] };
+                } catch (err) {
+                    res = { block: 'b-page', content: ['Exception in ', path, err.toString()] };
+                }
+
+                return res;
             });
 
     };
@@ -37,31 +52,11 @@ var bemDriver = function() {
 
     };
 
-    var getCreateResult = function(str) {
+    var getCreateResult = function(str, options) {
 
-/*
         return getHtml(
             getBemhtml(str),
-            getBemjson(str));
-*/
-        var path,
-            pathArr = str.replace('bemhtml', 'priv').split('/');
-
-        pathArr[pathArr.length - 1] = '_' + pathArr[pathArr.length - 1];
-        path = pathArr.join('/');
-
-        return BEM.util.readFile(path)
-            .then(function(c) {
-
-                var blocks = {},
-                    PRIV = function(data) {
-                        return blocks['b-page'](data);
-                    };
-
-                eval(c);
-
-                return BEMHTML.apply(PRIV());
-            });
+            getBemjson(str, options));
 
     };
 
@@ -71,16 +66,14 @@ var bemDriver = function() {
 
             var app = options.app;
 
-            process.env.ISPROJECT = true;
-
             if ('development' == app.get('env')) {
                 BEM.api.make().then(function() {
-                    return getCreateResult(str);
+                    return getCreateResult(str, options);
                 }).then(function(data) {
                     fn(false, data);
                 });
             } else {
-                getCreateResult(str).then(function(data) {
+                getCreateResult(str, options).then(function(data) {
                     fn(false, data);
                 });
             }

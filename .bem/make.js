@@ -1,48 +1,56 @@
+/*global MAKE:true */
+
+"use strict";
+
+//process.env.YENV = 'production';
+
 MAKE.decl('Arch', {
+
+    blocksLevelsRegexp: /^.+?\.blocks/,
+
+    bundlesLevelsRegexp: /^.+?\.bundles$/,
 
     getLibraries: function() {
 
-        if (process.env.ISPROJECT) {
-            process.env.ISPROJECT = false;
-
-            return this.libraries;
-
-        } else {
-            
-            return {
-                'bem-bl': {
-                    type: 'git',
-                    url: 'git://github.com/bem/bem-bl.git',
-                    treeish: '0.3'
-                }
-                // ,
-                // 'bl-core-bemhtml' : {
-                //     type: 'git',
-                //     url: 'git://github.com/bem/bl-core-bemhtml.git'
-                // }
-            };
-        }
+        return {
+            'bem-bl': {
+                type: 'git',
+                url: 'git://github.com/bem/bem-bl.git',
+                treeish: '0.3'
+            },
+            'bemhtml' : {
+                type: 'git',
+                url: 'git://github.com/bem/bemhtml.git'
+            },
+            'bootstrap-bl': {
+                type: 'git',
+                url: 'git://github.com/tadatuta/bootstrap-bl.git'
+            }
+        };
 
     }
 
 });
+
 
 MAKE.decl('BundleNode', {
 
     getTechs: function() {
-
         return [
             'bemjson.js',
             'bemdecl.js',
             'deps.js',
-            'bemhtml.js',
-            'css',
+            'bemhtml',
             'js',
-            'priv.js'
-            // ,
-            // 'html'
+            'css',
+            'ie.css',
+            'ie6.css',
+            'ie7.css',
+            'ie8.css',
+            'ie9.css',
+            'priv.js',
+            'html'
         ];
     }
 
 });
-
